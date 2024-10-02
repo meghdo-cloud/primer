@@ -25,7 +25,7 @@ pipeline {
                     rm -f .git/index
                     git reset
                     git remote remove origin
-                    git remote add origin https://github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
+                    git remote add origin https://${env.GITHUB_TOKEN}@github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git add .
                     git commit -m "Initialize new service: ${params.SERVICE_NAME}"
                     git push -u origin main     
