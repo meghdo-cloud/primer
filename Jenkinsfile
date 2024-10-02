@@ -20,11 +20,13 @@ pipeline {
                  sh """
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
+                    rm -f .git/index
+                    git reset
                     git remote remove origin
                     git remote add origin https://github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git add .
                     git commit -m "Initialize new service: ${params.SERVICE_NAME}"
-                    git push -u origin main        
+                    git push -u origin main     
                     """
               }
             }
