@@ -18,6 +18,9 @@ pipeline {
               script {
                 git branch: 'main', url: "${env.APP_TEMP}"
                  sh """
+                   if ! [[ "${SERVICE_NAME}" =~ ^[a-z]+[a-z0-9-]*$ ]]; then
+                     die "Invalid application format ${SERVICE_NAME} - special characters not allowed"
+                   fi
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     git config user.name "${env.GIT_USER_NAME}"
