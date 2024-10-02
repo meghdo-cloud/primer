@@ -34,5 +34,6 @@ pipeline {
         always {
             cleanWs() // Clean workspace after job finishes
         }
-    }
+     }
+  }      
 }
