@@ -21,10 +21,8 @@ pipeline {
                 git branch: 'main', url: "${env.APP_TEMP}"
                  sh """
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
-                     # Replace 'drizzle' with new service name in file contents
-                    find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
-                    
-                    # Rename files that contain 'drizzle' (before changing directories)
+
+                     # Rename files that contain 'drizzle' (before changing directories)
                     find . -type f -name '*drizzle*' | while read fname; do
                         mv "\$fname" "\$(echo \$fname | sed 's/drizzle/${params.SERVICE_NAME}/g')"
                     done
@@ -37,6 +35,9 @@ pipeline {
                     find . -depth -name '*drizzle*' | while read dname; do
                         mv "\$dname" "\$(echo \$dname | sed 's/drizzle/${params.SERVICE_NAME}/g')"
                     done
+
+                    # Replace 'drizzle' with new service name in file contents
+                    find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     
                     # Reset Git history, add new remote and push changes
                     git config user.name "${env.GIT_USER_NAME}"
