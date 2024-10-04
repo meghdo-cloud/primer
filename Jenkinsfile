@@ -73,6 +73,7 @@ pipeline {
 
                 sh """
                 git clone https://$GITHUB_TOKEN@github.com/${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git
+                ls -R
                 """
 
 
