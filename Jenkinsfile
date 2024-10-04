@@ -71,6 +71,8 @@ pipeline {
                 // Get the SSH URL of the newly created repo
                 def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
+                sshagent (credentials: ['jenkins_agents_ssh']) {
+
                 // Clone the seed job repository
                 git branch: 'main', url: "git@github.com:${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git"
 
@@ -83,12 +85,13 @@ pipeline {
                 sh """
                     git config user.email "jenkins@${env.GITHUB_ORG}.com"
                     git config user.name "Jenkins CI"
-                    git add gitrepos.txt
+                    git add ./seed_jobs/gitrepos.txt
                     git commit -m "Added ${params.SERVICE_NAME} repo to gitrepos.txt"
                     git push origin main
                 """
 
                 echo "Seed job repo updated successfully!"
+                }
                }
             }
         }
