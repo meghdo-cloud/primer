@@ -73,20 +73,22 @@ pipeline {
 
                 sh """
                 git clone https://$GITHUB_TOKEN@github.com/${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git
-                ls -R
+                
                 """
 
 
                 // Append the new repo SSH URL to gitrepos.txt
                 sh """
                     echo '${sshUrl}' >> ./jenkins-jobs/seed_jobs/gitrepos.txt
+                    cat ./jenkins-jobs/seed_jobs/gitrepos.txt
                 """
 
                 // Commit and push the changes
                sh """
+                    cd jenkins-jobs/seed_jobs
                     git config user.email "jenkins@${env.GITHUB_ORG}.com"
                     git config user.name "Jenkins CI"
-                    git add ./jenkins-jobs/seed_jobs/gitrepos.txt
+                    git add gitrepos.txt
                     git commit -m "Added ${params.SERVICE_NAME} repo to gitrepos.txt"
                     git push https://$GITHUB_TOKEN@github.com/${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git main
                """
