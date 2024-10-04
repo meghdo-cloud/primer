@@ -67,15 +67,14 @@ pipeline {
         }
         stage('Update Seed Job') {
          steps {
-            withCredentials([sshUserPrivateKey(credentialsId: 'jenkins_agent_ssh', keyFileVariable: 'SSH_KEY_PATH')]) {
             script {
                 // Get the SSH URL of the newly created repo
                 def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
-                
+                sh """
+                git clone https://$GITHUB_TOKEN@github.com/${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git
+                """
 
-                // Clone the seed job repository
-                git branch: 'main', url: "git@github.com:${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git"
 
                 // Append the new repo SSH URL to gitrepos.txt
                 sh """
@@ -83,16 +82,17 @@ pipeline {
                 """
 
                 // Commit and push the changes
-                sh """
+               sh """
+                    cd ./seed_jobs
                     git config user.email "jenkins@${env.GITHUB_ORG}.com"
                     git config user.name "Jenkins CI"
-                    git add ./seed_jobs/gitrepos.txt
+                    git add gitrepos.txt
                     git commit -m "Added ${params.SERVICE_NAME} repo to gitrepos.txt"
-                    git push origin main
-                """
+                    git push https://$GITHUB_TOKEN@github.com/${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git main
+               """
 
                 echo "Seed job repo updated successfully!"
-                }
+                
                }
             }
         }
