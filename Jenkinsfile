@@ -67,11 +67,12 @@ pipeline {
         }
         stage('Update Seed Job') {
          steps {
+            withCredentials([sshUserPrivateKey(credentialsId: 'jenkins_agent_ssh', keyFileVariable: 'SSH_KEY_PATH')]) {
             script {
                 // Get the SSH URL of the newly created repo
                 def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
-                sshagent (credentials: ['jenkins_agent_ssh']) {
+                
 
                 // Clone the seed job repository
                 git branch: 'main', url: "git@github.com:${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git"
