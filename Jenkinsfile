@@ -73,7 +73,7 @@ pipeline {
                     script: """
                         curl -s -H "Authorization: token ${env.GITHUB_TOKEN}" \
                              ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME} \
-                             | jq -r '.ssh_url'
+                             |  grep '"ssh_url":' | sed 's/.*"ssh_url": "\(.*\)",/\1/'
                     """,
                     returnStdout: true
                 ).trim()
