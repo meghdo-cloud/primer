@@ -23,7 +23,7 @@ pipeline {
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
 
                      # Rename directories that contain 'drizzle' (before changing directories)
-                    find . -type d -name '*drizzle*' -exec bash -c 'mv "$1" "$/drizzle/\${params.SERVICE_NAME}" -- {} \;
+                    find . -type d -name '*drizzle*' -exec bash -c 'mv "$1" "$/drizzle/\${params.SERVICE_NAME}" -- {} +
 
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     
