@@ -22,20 +22,9 @@ pipeline {
                  sh """
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
 
-                     # Rename files that contain 'drizzle' (before changing directories)
-                    find . -type f -name '*drizzle*' | while read fname; do
-                        mv "\$fname" "\$(echo \$fname | sed 's/drizzle/${params.SERVICE_NAME}/g')"
-                    done
+                     # Rename directories that contain 'drizzle' (before changing directories)
+                    find . -type d -name '*drizzle*' -exec rename -v "s/drizzle/${params.SERVICE_NAME}/g' {} \;
                     
-                    # Debug: Check if file renaming was successful
-                    echo "Checking files after renaming:"
-                    find . -name '*${params.SERVICE_NAME}Application.java'
-                    
-                    # Rename directories that contain 'drizzle' (after file renaming)
-                    find . -depth -name '*drizzle*' | while read dname; do
-                        mv "\$dname" "\$(echo \$dname | sed 's/drizzle/${params.SERVICE_NAME}/g')"
-                    done
-
                     # Replace 'drizzle' with new service name in file contents
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     
