@@ -69,23 +69,14 @@ pipeline {
          steps {
             script {
                 // Get the SSH URL of the newly created repo
-                def sshUrl = sh(
-                    script: """
-                        curl -s -H "Authorization: token ${env.GITHUB_TOKEN}" \
-                             ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME} \
-                             |  grep '"ssh_url":' | sed 's/.*"ssh_url": "\(.*\)",/\1/'
-                    """,
-                    returnStdout: true
-                ).trim()
-
-                echo "New Repo SSH URL: ${sshUrl}"
+                def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
                 // Clone the seed job repository
                 git branch: 'main', url: "git@github.com:${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git"
 
                 // Append the new repo SSH URL to gitrepos.txt
                 sh """
-                    echo '${sshUrl}' >> gitrepos.txt
+                    echo '${sshUrl}' >> ./seed_jobs/gitrepos.txt
                 """
 
                 // Commit and push the changes
