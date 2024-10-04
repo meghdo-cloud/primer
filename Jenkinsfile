@@ -7,10 +7,11 @@ pipeline {
     }
 
     environment {
-        APP_TEMP = 'https://github.com/meghdo-cloud/drizzle.git' 
+        APP_TEMP = 'https://github.com/meghdo-cloud/drizzle.git'
         GITHUB_API_URL = 'https://api.github.com'
         WEBHOOK_URL = 'https://jenkins.meghdo.cloud'
         GITHUB_TOKEN = credentials('git_admin_token')
+        SEED_JOB_REPO = 'jenkins-jobs'
     }
 
     stages {
@@ -18,7 +19,7 @@ pipeline {
             steps {
               script {
                 if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9-]*$/)) {
-                        error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }  
+                        error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
                 git branch: 'main', url: "${env.APP_TEMP}"
                 def repoExistsResponse = sh(
                     script: """
@@ -58,13 +59,13 @@ pipeline {
                     git remote add origin https://${env.GITHUB_TOKEN}@github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git add .
                     git commit -m "Initialize new service: ${params.SERVICE_NAME}"
-                    git push -u origin main                    
+                    git push -u origin main
                     """
                 }
               }
             }
         }
-        stage('Update Seed Job Repo with SSH URL') {
+        stage('Update Seed Job') {
          steps {
             script {
                 // Get the SSH URL of the newly created repo
@@ -97,7 +98,8 @@ pipeline {
                 """
 
                 echo "Seed job repo updated successfully!"
+               }
             }
         }
-  }      
+    }
 }
