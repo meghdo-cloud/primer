@@ -2,8 +2,8 @@ pipeline {
     agent { label 'javaagent' }
 
     parameters {
-        string(name: 'SERVICE_NAME', defaultValue: 'my-service', description: 'Name of the new service')
-        string(name: 'GITHUB_ORG', description: 'Git repo where the new application')
+        string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
+        string(name: 'GITHUB_ORG', defaultValue: 'meghdo-cloud', description: 'Git repo where the new application')
     }
 
     environment {
