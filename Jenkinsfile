@@ -71,7 +71,7 @@ pipeline {
                 // Get the SSH URL of the newly created repo
                 def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
-                sshagent (credentials: ['jenkins_agents_ssh']) {
+                sshagent (credentials: ['jenkins_agent_ssh']) {
 
                 // Clone the seed job repository
                 git branch: 'main', url: "git@github.com:${env.GITHUB_ORG}/${env.SEED_JOB_REPO}.git"
