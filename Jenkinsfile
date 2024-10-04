@@ -28,6 +28,10 @@ pipeline {
                     find . -name '*drizzle*' | while read fname; do
                         mv "\$fname" "\$(echo \$fname | sed 's/drizzle/${params.SERVICE_NAME}/g')"
                     done
+
+                    # Debug: Check if file exists after renaming
+                    echo "Checking if file exists after renaming:"
+                    find . -name '*${params.SERVICE_NAME}Application.java'
                     
                     # Rename directories that contain 'drizzle'
                     find . -depth -name '*drizzle*' | while read dname; do
