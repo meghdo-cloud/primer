@@ -20,7 +20,7 @@ pipeline {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }  
                 git branch: 'main', url: "${env.APP_TEMP}"
                  sh """
-                    curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
+                    curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${params.GITHUB_ORG}/repos
 
                      # Rename directories that contain 'drizzle' (before changing directories)
                     find . -type d -name '*drizzle*' -exec bash -c 'mv "$1" "$/drizzle/\${params.SERVICE_NAME}" -- {} +
