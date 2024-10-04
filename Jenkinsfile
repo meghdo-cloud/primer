@@ -24,6 +24,7 @@ pipeline {
                     pwd
                     mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
                     mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME}
+                    find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
                     rm -f .git/index
