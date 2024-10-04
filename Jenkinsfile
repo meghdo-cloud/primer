@@ -9,6 +9,7 @@ pipeline {
     environment {
         APP_TEMP = 'https://github.com/meghdo-cloud/drizzle.git' 
         GITHUB_API_URL = 'https://api.github.com'
+        WEBHOOK_URL = 'https://jenkins.meghdo.cloud'
         GITHUB_TOKEN = credentials('git_admin_token')
     }
 
@@ -33,6 +34,18 @@ pipeline {
                 } else if (repoExistsResponse == '404') {
                     sh """
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
+                    curl -H "Authorization: token ${env.GITHUB_TOKEN}" -H "Content-Type: application/json" -X POST \
+                                 -d '{
+                                        "name": "web",
+                                        "active": true,
+                                        "events": ["push", "pull_request"],
+                                        "config": {
+                                            "url": "${env.WEBHOOK_URL}",
+                                            "content_type": "json",
+                                            "insecure_ssl": "0"
+                                        }
+                                     }' \
+                                 ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}/hooks
                     pwd
                     mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
                     mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME}
