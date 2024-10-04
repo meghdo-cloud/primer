@@ -20,6 +20,18 @@ pipeline {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }  
                 git branch: 'main', url: "${env.APP_TEMP}"
                  sh """
+                    def repoExistsResponse = sh(
+                    script: """
+                        curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${env.GITHUB_TOKEN}" \
+                        ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}
+                    """,
+                    returnStdout: true
+                    ).trim()
+
+                // If the response is 200, the repo exists
+                if (repoExistsResponse == '200') {
+                    echo "Repository '${params.SERVICE_NAME}' already exists in the organization '${env.GITHUB_ORG}'. Skipping creation."
+                } else if (repoExistsResponse == '404') {
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
                     pwd
                     mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
@@ -33,7 +45,8 @@ pipeline {
                     git remote add origin https://${env.GITHUB_TOKEN}@github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git add .
                     git commit -m "Initialize new service: ${params.SERVICE_NAME}"
-                    git push -u origin main     
+                    git push -u origin main
+                    }
                     """
               }
             }
