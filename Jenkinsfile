@@ -23,6 +23,8 @@ pipeline {
                     curl -H "Authorization: token ${env.GITHUB_TOKEN}" -d '{"name": "${params.SERVICE_NAME}", "private": true}' ${env.GITHUB_API_URL}/orgs/${GITHUB_ORG}/repos
                   
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
+                    find . -name "drizzle*' -exec bash -c 'mv "$1" "${1/drizzle/test}"'  {} +
+                    
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
                     rm -f .git/index
