@@ -9,7 +9,7 @@ pipeline {
     environment {
         APP_TEMP = 'https://github.com/meghdo-cloud/drizzle.git'
         GITHUB_API_URL = 'https://api.github.com'
-        WEBHOOK_URL = 'https://jenkins.meghdo.cloud'
+        WEBHOOK_URL = 'https://jenkins.meghdo.cloud/github-webhook/'
         GITHUB_TOKEN = credentials('git_admin_token')
         SEED_JOB_REPO = 'jenkins-jobs'
     }
