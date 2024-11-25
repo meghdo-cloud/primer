@@ -18,7 +18,7 @@ pipeline {
         stage('Create a new Github Repo') {
             steps {
               script {
-                if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9_]*$/)) {
+                if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
                 git branch: 'main', url: "${env.APP_TEMP}"
                 def repoExistsResponse = sh(
