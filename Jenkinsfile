@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'javaagent' }
+    agent { label 'jnlpagent' }
 
     parameters {
         string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
