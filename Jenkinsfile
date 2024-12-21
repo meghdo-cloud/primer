@@ -25,7 +25,7 @@ pipeline {
                 deftemplateexists = sh(
                     script: """
                         curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${env.GITHUB_TOKEN}" \
-                        ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${env.APP_TEMP}
+                        ${env.APP_TEMP}
                     """,
                     returnStdout: true
                 ).trim()
