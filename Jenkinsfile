@@ -4,10 +4,11 @@ pipeline {
     parameters {
         string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
         string(name: 'GITHUB_ORG', defaultValue: 'meghdo-cloud', description: 'Git repo where the new application')
+        choice(name: 'LANG', choices: ['java17','python','go'])
     }
 
     environment {
-        APP_TEMP = 'https://github.com/meghdo-cloud/drizzle.git'
+        APP_TEMP = 'https://github.com/meghdo-cloud/drizzle-${params.LANG}.git'
         GITHUB_API_URL = 'https://api.github.com'
         WEBHOOK_URL = 'https://jenkins.meghdo.cloud/github-webhook/'
         GITHUB_TOKEN = credentials('git_admin_token')
@@ -21,6 +22,22 @@ pipeline {
                 if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
                 git branch: 'main', url: "${env.APP_TEMP}"
+
+                //check if the template exists
+                deftemplateexists = sh(
+                    script: """
+                        curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${env.GITHUB_TOKEN}" \
+                        ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${env.APP_TEMP}
+                    """,
+                    returnStdout: true
+                ).trim()
+
+                if (deftemplateexists == '404') {
+                    echo "${params.LANG} - template hasnt be subscribed"
+                    System.exit(1) 
+                }              
+                
+                
                 def repoExistsResponse = sh(
                     script: """
                         curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${env.GITHUB_TOKEN}" \
@@ -48,8 +65,9 @@ pipeline {
                                      }' \
                                  ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}/hooks
                     pwd
+                    if (${params.LANG}.contains('java')) {
                     mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
-                    mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME}
+                    mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} }
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
