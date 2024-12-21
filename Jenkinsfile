@@ -8,7 +8,6 @@ pipeline {
     }
 
     environment {
-        APP_TEMP = 'https://github.com/meghdo-cloud/drizzle-${params.LANG}.git'
         GITHUB_API_URL = 'https://api.github.com'
         WEBHOOK_URL = 'https://jenkins.meghdo.cloud/github-webhook/'
         GITHUB_TOKEN = credentials('git_admin_token')
@@ -19,9 +18,8 @@ pipeline {
         stage('Create a new Github Repo') {
             steps {
               script {
-                if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
-                        error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
-                git branch: 'main', url: "${env.APP_TEMP}"
+                //set the env app template
+                env.APP_TEMP = "https://github.com/${params.GITHUB_ORG}/drizzle-${params.LANG}.git"
 
                 //check if the template exists
                 deftemplateexists = sh(
@@ -35,7 +33,11 @@ pipeline {
                 if (deftemplateexists == '404') {
                     echo "${params.LANG} - template hasnt be subscribed"
                     System.exit(1) 
-                }              
+                }   
+
+                if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
+                        error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
+                git branch: 'main', url: "${env.APP_TEMP}"           
                 
                 
                 def repoExistsResponse = sh(
