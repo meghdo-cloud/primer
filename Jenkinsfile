@@ -67,9 +67,10 @@ pipeline {
                                      }' \
                                  ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}/hooks
                     pwd
-                    if (${params.LANG}.contains('java')) {
-                    mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
-                    mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} }
+                    if [[ "${params.LANG}" == *"java"* ]]; then
+                        mv ./src/main/java/cloud/meghdo/drizzle/drizzleApplication.java ./src/main/java/cloud/meghdo/drizzle/${params.SERVICE_NAME}Application.java
+                        mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} 
+                    fi
                     find . -type f -exec sed -i 's/drizzle/${params.SERVICE_NAME}/g' {} +
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
