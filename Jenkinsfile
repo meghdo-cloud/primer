@@ -67,7 +67,7 @@ pipeline {
                                      }' \
                                  ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}/hooks
                     pwd
-                    if [[ "${params.LANG}" == *"java"* ]]; then
+                    if [[ "${params.LANG}" == "java" ]]; then
                         mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} 
                     fi
                     find . -type f -exec sed -i 's/drizzle${params.LANG}/${params.SERVICE_NAME}/g' {} +
