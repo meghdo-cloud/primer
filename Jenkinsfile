@@ -38,12 +38,15 @@ pipeline {
                 if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
                    
-                   // Modified to use shallow clone
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: 'main']],
-                        userRemoteConfigs: [[url: "${env.APP_TEMP}"]],
-                        extensions: [[$class: 'CloneOption', depth: 1, noTags: true, shallow: true]]
-                    ])          
+                    // Create a temporary directory for the template
+                    sh "mkdir -p template_files"
+                    dir('template_files') {
+                        // Clone template and copy files without Git history
+                        sh """
+                            git clone --depth 1 ${env.APP_TEMP} .
+                            rm -rf .git
+                        """
+                    }      
                 
                 
                 def repoExistsResponse = sh(
@@ -72,20 +75,18 @@ pipeline {
                                         }
                                      }' \
                                  ${env.GITHUB_API_URL}/repos/${env.GITHUB_ORG}/${params.SERVICE_NAME}/hooks
-                    pwd
+                    cd template_files
                     if [ "${params.LANG}" = "java" ]; then
                         mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} 
                     fi
                     find . -type f -exec sed -i 's/drizzle${params.LANG}/${params.SERVICE_NAME}/g' {} +
+                    git init
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
-                    git checkout -b main
-                    rm -f .git/index
-                    git reset
-                    git remote remove origin
-                    git remote add origin https://${env.GITHUB_TOKEN}@github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git add .
                     git commit -m "Initialize new service: ${params.SERVICE_NAME}"
+                    git branch -M main
+                    git remote add origin https://${env.GITHUB_TOKEN}@github.com/${env.GITHUB_ORG}/${params.SERVICE_NAME}.git
                     git push -u origin main
                     """
                 }
