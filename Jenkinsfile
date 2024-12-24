@@ -37,7 +37,13 @@ pipeline {
 
                 if (!("${params.SERVICE_NAME}" =~ /^[a-z]+[a-z0-9]*$/)) {
                         error "Invalid application format: '${params.SERVICE_NAME}' - special characters not allowed" }
-                git branch: 'main', url: "${env.APP_TEMP}"           
+                   
+                   // Modified to use shallow clone
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: 'main']],
+                        userRemoteConfigs: [[url: "${env.APP_TEMP}"]],
+                        extensions: [[$class: 'CloneOption', depth: 1, noTags: true, shallow: true]]
+                    ])          
                 
                 
                 def repoExistsResponse = sh(
