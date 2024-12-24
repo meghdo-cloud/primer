@@ -79,6 +79,7 @@ pipeline {
                     find . -type f -exec sed -i 's/drizzle${params.LANG}/${params.SERVICE_NAME}/g' {} +
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
+                    git checkout -b main
                     rm -f .git/index
                     git reset
                     git remote remove origin
