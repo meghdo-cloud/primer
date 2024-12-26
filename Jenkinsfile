@@ -20,6 +20,7 @@ pipeline {
               script {
                 //set the env app template
                 env.APP_TEMP = "https://github.com/${params.GITHUB_ORG}/drizzle${params.LANG}.git"
+                env.CLONE_URL = "https://${env.GITHUB_TOKEN}@github.com/${params.GITHUB_ORG}/drizzle${params.LANG}.git"
 
                 //check if the template exists
                 deftemplateexists = sh(
@@ -43,7 +44,7 @@ pipeline {
                     dir('template_files') {
                         // Clone template and copy files without Git history
                         sh """
-                            git clone --depth 1 ${env.APP_TEMP} .
+                            git clone --depth 1 ${env.CLONE_URL} .
                             rm -rf .git
                         """
                     }      
