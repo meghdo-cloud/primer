@@ -4,7 +4,7 @@ pipeline {
     parameters {
         string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
         string(name: 'GITHUB_ORG', defaultValue: 'meghdo-cloud', description: 'Git repo where the new application')
-        choice(name: 'LANG', choices: ['java','python','go','nodejs'])
+        choice(name: 'LANG', choices: ['java','python','go','nodejs','angular','react'])
     }
 
     environment {
