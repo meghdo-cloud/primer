@@ -5,6 +5,7 @@ pipeline {
         string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
         string(name: 'GITHUB_ORG', defaultValue: 'meghdo-cloud', description: 'Git repo where the new application')
         choice(name: 'LANG', choices: ['java','python','go','nodejs','angular','react'])
+        string(name: 'NAMESPACE', defaultValue: 'byngtech', description: 'Namespace where the service it to be deployed')
     }
 
     environment {
@@ -81,6 +82,7 @@ pipeline {
                         mv ./src/main/java/cloud/meghdo/drizzle ./src/main/java/cloud/meghdo/${params.SERVICE_NAME} 
                     fi
                     find . -type f -exec sed -i 's/drizzle${params.LANG}/${params.SERVICE_NAME}/g' {} +
+                    find . -type f -exec sed -i 's/namespace: "default"/namespace: "${params.NAMESPACE}"/g' {} + 
                     git init
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
