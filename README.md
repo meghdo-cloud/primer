@@ -10,13 +10,6 @@ The Primer job streamlines the process of creating new services by:
 - Setting up webhooks for CI/CD integration
 - Updating seed jobs for automatic pipeline generation
 
-## Prerequisites
-
-- Jenkins with `jnlpagent` label configured
-- GitHub organization access with admin privileges
-- Required Jenkins credentials:
-  - `git_admin_token`: GitHub personal access token with repo and webhook permissions
-- Template repositories must exist in the format: `drizzle{LANG}` (e.g., `drizzlejava`, `drizzlepython`)
 
 ## Parameters
 
