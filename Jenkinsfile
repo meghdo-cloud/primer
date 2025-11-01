@@ -2,10 +2,10 @@ pipeline {
     agent { label 'jnlpagent' }
 
     parameters {
-        string(name: 'SERVICE_NAME', defaultValue: 'test', description: 'Name of the new service')
+        string(name: 'SERVICE_NAME', defaultValue: '', description: 'Name of the new service')
         string(name: 'GITHUB_ORG', defaultValue: 'meghdo-cloud', description: 'Git repo where the new application')
         choice(name: 'LANG', choices: ['java','python','go','nodejs','angular','react'])
-        string(name: 'NAMESPACE', defaultValue: 'byngtech', description: 'Namespace where the service it to be deployed')
+        string(name: 'NAMESPACE', defaultValue: 'default', description: 'Namespace where the service it to be deployed')
     }
 
     environment {
@@ -17,6 +17,9 @@ pipeline {
 
     stages {
         stage('Create a new Github Repo') {
+            when {
+                expression { params.SERVICE_NAME != null && params.SERVICE_NAME != '' }
+            }
             steps {
               script {
                 //set the env app template
@@ -98,8 +101,11 @@ pipeline {
             }
         }
         stage('Update Seed Job') {
-         steps {
-            script {
+            when {
+                expression { params.SERVICE_NAME != null && params.SERVICE_NAME != '' }
+            }
+            steps {
+              script {
                 // Get the SSH URL of the newly created repo
                 def sshUrl = "git@github.com:${env.GITHUB_ORG}/${params.SERVICE_NAME}.git"
 
