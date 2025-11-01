@@ -83,7 +83,7 @@ pipeline {
                     fi
                     find . -type f -exec sed -i 's/drizzle${params.LANG}/${params.SERVICE_NAME}/g' {} +
                     find . -type f -exec sed -i 's/namespace: "default"/namespace: "${params.NAMESPACE}"/g' {} + 
-                    find . -type f -exec sed -i 's/svc-cloudsql/svc-"${params.NAMESPACE}"/g' {} + 
+                    find . -type f -exec sed -i 's/svc-cloudsql/svc-${params.NAMESPACE}/g' {} + 
                     git init
                     git config user.name "${env.GIT_USER_NAME}"
                     git config user.email "${env.GIT_USER_EMAIL}"
